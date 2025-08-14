@@ -1,7 +1,7 @@
 import os, httpx
 from dotenv import load_dotenv
 
-load_dotenv()  # garante que .env foi carregado mesmo se importarem cedo
+load_dotenv() 
 
 async def get_weather(city: str | None = None, units: str = "metric"):
     """
