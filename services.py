@@ -108,7 +108,6 @@ async def get_weather(city: str | None = None, units: str = "metric", forecast: 
                 "tomorrow_max": temp_max,
                 "pop_tomorrow": pop_max,
                 "weather_tomorrow": description,
-                # compat: manter chaves de 'today_*' (não aplicável aqui)
                 "today_max": None,
                 "today_min": None,
                 "pop_today": None,

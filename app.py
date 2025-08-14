@@ -22,7 +22,6 @@ def infer_forecast_flag(text: str | None) -> bool:
         "amanhã", "amanha", "tomorrow",
         "previsão", "previsao",
         "forecast",
-        # variações comuns:
         "amanhã cedo", "amanha cedo", "amanhã de manhã", "amanha de manha"
     ]
     return any(k in t for k in keywords)
@@ -117,8 +116,7 @@ async def chat(request: ChatRequest):
                 args.setdefault("city", request.city)
             args.setdefault("units", request.units)
             args.setdefault("forecast", inferred_forecast)
-
-            # Validação mínima
+            
             if not args.get("city"):
                 raise HTTPException(status_code=400, detail="Informe a cidade.")
 
