@@ -114,6 +114,7 @@ async def get_weather(city: str | None = None, units: str = "metric", forecast: 
                 "today_max": None,
                 "today_min": None,
                 "pop_today": None,
+                
             }
 
 
