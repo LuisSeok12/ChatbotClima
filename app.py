@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-# carregue .env antes de importar qualquer coisa que use as variáveis
+# Carrega .env antes de usar as variáveis
 load_dotenv()
 
 from openai import OpenAI
@@ -13,16 +13,32 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = FastAPI(title="Weather Chatbot API")
 
+# ---------- Heurística simples para detectar pedido de previsão ----------
+def infer_forecast_flag(text: str | None) -> bool:
+    if not text:
+        return False
+    t = text.lower()
+    keywords = [
+        "amanhã", "amanha", "tomorrow",
+        "previsão", "previsao",
+        "forecast",
+        # variações comuns:
+        "amanhã cedo", "amanha cedo", "amanhã de manhã", "amanha de manha"
+    ]
+    return any(k in t for k in keywords)
+
 class ChatRequest(BaseModel):
     message: str
     city: str | None = None
-    units: str = "metric"   # 'metric' (°C) ou 'imperial' (°F)
+    units: str = "metric"     # 'metric' (°C) ou 'imperial' (°F)
+    forecast: bool | None = None  # se None, tentamos inferir pelo texto
+
 
 TOOLS = [{
     "type": "function",
     "function": {
         "name": "get_weather",
-        "description": "Obtém o clima atual (e resumo do dia, se disponível) para uma cidade.",
+        "description": "Obtém clima atual ou previsão de AMANHÃ para uma cidade (quando forecast=true).",
         "parameters": {
             "type": "object",
             "properties": {
@@ -35,6 +51,11 @@ TOOLS = [{
                     "enum": ["metric", "imperial"],
                     "default": "metric",
                     "description": "metric=Celsius, imperial=Fahrenheit."
+                },
+                "forecast": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": "Se true, retorna previsão agregada de AMANHÃ."
                 }
             },
             "additionalProperties": False
@@ -44,7 +65,8 @@ TOOLS = [{
 
 SYSTEM_PROMPT = (
     "Você é um assistente meteorológico educado. "
-    "Quando o usuário pedir informações de clima ou previsão, chame a ferramenta get_weather. "
+    "Quando o usuário pedir clima ou previsão, chame a ferramenta get_weather. "
+    "Se o usuário mencionar termos como 'amanhã', 'tomorrow' ou 'previsão', chame a ferramenta com forecast=true. "
     "Se o usuário não informar a cidade, peça o nome da cidade. "
     "Explique resultados com °C quando 'units=metric' e em °F quando 'units=imperial'."
 )
@@ -59,11 +81,15 @@ def health():
 
 @app.post("/chat")
 async def chat(request: ChatRequest):
+    # Inferimos forecast quando o cliente não especificar no body
+    inferred_forecast = infer_forecast_flag(request.message) if request.forecast is None else request.forecast
+
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": request.message},
     ]
 
+    # Deixa o modelo decidir chamar a tool; o prompt já orienta forecast=true quando for o caso
     try:
         first = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -86,10 +112,13 @@ async def chat(request: ChatRequest):
 
             args = json.loads(call.function.arguments or "{}")
 
+            # Defaults vindos do body
             if request.city:
                 args.setdefault("city", request.city)
             args.setdefault("units", request.units)
+            args.setdefault("forecast", inferred_forecast)
 
+            # Validação mínima
             if not args.get("city"):
                 raise HTTPException(status_code=400, detail="Informe a cidade.")
 
