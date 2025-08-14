@@ -9,6 +9,9 @@ async def get_weather(city: str | None = None, units: str = "metric", forecast: 
     """
     Busca clima ou previsão de amanhã por nome da cidade usando /data/2.5/weather.
     Retorna um dicionário padronizado.
+    Campos `today_max`, `today_min`, `pop_today`, etc. podem estar `None`
+    dependendo do tipo de consulta (clima atual ou previsão), mas são
+    mantidos por consistência no formato do retorno.
     """
     api_key = (os.getenv("OPENWEATHER_API_KEY") or "").strip()
     if not api_key:
