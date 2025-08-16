@@ -62,13 +62,7 @@ TOOLS = [{
     }
 }]
 
-SYSTEM_PROMPT = (
-    "Você é um assistente meteorológico educado. "
-    "Quando o usuário pedir clima ou previsão, chame a ferramenta get_weather. "
-    "Se o usuário mencionar termos como 'amanhã', 'tomorrow' ou 'previsão', chame a ferramenta com forecast=true. "
-    "Se o usuário não informar a cidade, peça o nome da cidade. "
-    "Explique resultados com °C quando 'units=metric' e em °F quando 'units=imperial'."
-)
+SYSTEM_PROMPT = "Você é um assistente meteorológico."
 
 @app.get("/")
 def root():
