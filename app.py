@@ -88,10 +88,14 @@ async def chat(request: ChatRequest):
         {"role": "user", "content": request.message},
     ]
 
+    #Fine-tuning: use o modelo treinado
+    # Se não tiver fine-tuning, use o modelo base
+    ft_model = "ft:gpt-4o-mini-2024-07-18:luis::C4yfD5o4"
+
     # Deixa o modelo decidir chamar a tool; o prompt já orienta forecast=true quando for o caso
     try:
         first = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=ft_model,
             messages=messages,
             tools=TOOLS,
             tool_choice="auto",
