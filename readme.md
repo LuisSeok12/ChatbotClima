@@ -4,7 +4,7 @@ Um chatbot em **Python (FastAPI)** que usa **OpenAI** para entender perguntas em
 
 ---
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 * Conversa em linguagem natural (OpenAI)
 * Clima **atual** por cidade (`/data/2.5/weather`)
@@ -13,7 +13,7 @@ Um chatbot em **Python (FastAPI)** que usa **OpenAI** para entender perguntas em
 
 ---
 
-## 🧱 Stack
+## Stack
 
 * Python 3.10+
 * FastAPI
@@ -24,7 +24,7 @@ Um chatbot em **Python (FastAPI)** que usa **OpenAI** para entender perguntas em
 
 ---
 
-## 📁 Estrutura
+## Estrutura
 
 ```
 .
@@ -37,7 +37,7 @@ Um chatbot em **Python (FastAPI)** que usa **OpenAI** para entender perguntas em
 
 ---
 
-## 🔑 Variáveis de ambiente
+## Variáveis de ambiente
 
 Crie um arquivo **`.env`** na raiz com:
 
@@ -63,7 +63,7 @@ __pycache__/
 
 ---
 
-## 🚀 Como rodar
+## Como rodar
 
 ### 1) Clonar o repositório
 
@@ -116,7 +116,7 @@ Acesse:
 
 ---
 
-## 🧪 Exemplo de uso
+## Exemplo de uso
 
 ### Swagger UI
 
@@ -151,7 +151,7 @@ Invoke-RestMethod -Uri "http://127.0.0.1:8000/chat" -Method POST -ContentType "a
 
 ---
 
-## 🩺 Troubleshooting
+## Troubleshooting
 
 * **`uvicorn: command not found`**
   Use `python -m uvicorn app:app --reload` ou ative o venv.
